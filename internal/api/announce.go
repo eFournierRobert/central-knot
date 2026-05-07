@@ -10,6 +10,7 @@ import (
 	"github.com/jackpal/bencode-go"
 )
 
+// AnnounceHandler handles incoming announcement from clients.
 func AnnounceHandler(writer http.ResponseWriter, req *http.Request) {
 	query := req.URL.RawQuery
 	log.Println(query)

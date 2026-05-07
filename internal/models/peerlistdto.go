@@ -6,16 +6,22 @@ import (
 	"strings"
 )
 
+// PeerListDto is the DTO struct for the Peer list
+// being returned to a client after an announcement.
 type PeerListDto struct {
 	Interval int       `bencode:"interval"`
 	Peers    []PeerDto `bencode:"peers"`
 }
 
+// CompactPeerListDto is the compact version of a
+// PeerListDto as per BEP 23.
 type CompactPeerListDto struct {
 	Interval int    `bencode:"interval"`
 	Peers    []byte `bencode:"peers"`
 }
 
+// ToCompact returns a corresponding CompactPeerListDto
+// for a PeerListDto.
 func (p *PeerListDto) ToCompact() CompactPeerListDto {
 	var buf []byte
 	for _, p := range p.Peers {

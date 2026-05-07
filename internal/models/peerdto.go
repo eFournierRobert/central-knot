@@ -5,6 +5,8 @@ import (
 	"net/url"
 )
 
+// FullPeerDto is the DTO struct where all
+// the query parameters of an announcement by a client are parsed into.
 type FullPeerDto struct {
 	InfoHash   string
 	PeerId     string
@@ -16,6 +18,7 @@ type FullPeerDto struct {
 	Compact    bool
 }
 
+// NewPeerDto parses the given query parameters into a FullPeerDto.
 func NewPeerDto(query string) (*FullPeerDto, error) {
 	values, err := url.ParseQuery(query)
 	if err != nil {
@@ -38,6 +41,8 @@ func NewPeerDto(query string) (*FullPeerDto, error) {
 	}, nil
 }
 
+// dtoValidation validates if the given url values contains all
+// the necessary parameters mentioned in BEP 3.
 func dtoValidation(values url.Values) error {
 	if len(values) == 0 {
 		return errors.New("empty params")

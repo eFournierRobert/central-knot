@@ -6,6 +6,8 @@ import (
 	"gorm.io/gorm"
 )
 
+// Events is an enum for all the possible events
+// mentioned in BEP 3.
 type Events int
 
 const (
@@ -16,6 +18,8 @@ const (
 	Downloaded
 )
 
+// PeerTorrent is the struct used for database operations
+// on rows of peer_torrent.
 type PeerTorrent struct {
 	gorm.Model
 	PeerId     uint
@@ -26,6 +30,8 @@ type PeerTorrent struct {
 	Event      Events
 }
 
+// ParseEvent takes a string and returns the corresponding
+// item in Events.
 func ParseEvent(event string) (Events, error) {
 	switch event {
 	case "started":
