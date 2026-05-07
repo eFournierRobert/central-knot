@@ -11,12 +11,8 @@ type FullPeerDto struct {
 	Uploaded   string
 	Downloaded string
 	Left       string
-	Corrupt    string
-	Key        string
 	Event      string
-	Numwant    string
 	Compact    bool
-	NoPeerId   bool
 }
 
 func NewPeerDto(query string) FullPeerDto {
@@ -35,11 +31,7 @@ func NewPeerDto(query string) FullPeerDto {
 		Uploaded:   values["uploaded"],
 		Downloaded: values["downloaded"],
 		Left:       values["left"],
-		Corrupt:    values["corrupt"],
-		Key:        values["key"],
 		Event:      values["event"],
-		Numwant:    values["numwant"],
 		Compact:    values["compact"] == "1",
-		NoPeerId:   values["no_peer_id"] == "1",
 	}
 }

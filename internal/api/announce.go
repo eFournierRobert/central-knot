@@ -26,7 +26,7 @@ func SetUpAnnounceEndpoint() {
 
 			peerList, err := service.Announce(&dto, ip)
 			if err != nil {
-				if err := bencode.Marshal(writer, models.ErrorResponse{FailureReason: err.Error()}); err != nil {
+				if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: err.Error()}); err != nil {
 					log.Println(err)
 				}
 				return

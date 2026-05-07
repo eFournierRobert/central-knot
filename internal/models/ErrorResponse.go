@@ -1,5 +1,5 @@
 package models
 
-type ErrorResponse struct {
-	FailureReason string
+type ErrorResponseDto struct {
+	FailureReason string `bencode:"failure reason"`
 }
