@@ -105,18 +105,18 @@ func ensureTorrent(infoHash []byte) (models.Torrent, error) {
 // ensurePeer returns the Peer that has the given peer ID in the
 // database. If it isn't found, it will create it and return the created row.
 func ensurePeer(peerId, ip, port string) (models.Peer, error) {
-	peer, err := repo_peer.GetPeer(peerId)
+	peer, err := repo_peer.Get(peerId)
 	if err != nil {
 		port, err := strconv.Atoi(port)
 		if err != nil {
 			return models.Peer{}, err
 		}
 
-		if err := repo_peer.AddPeer(peerId, ip, port); err != nil {
+		if err := repo_peer.Add(peerId, ip, port); err != nil {
 			return models.Peer{}, err
 		}
 
-		peer, err = repo_peer.GetPeer(peerId)
+		peer, err = repo_peer.Get(peerId)
 		if err != nil {
 			return models.Peer{}, err
 		}
