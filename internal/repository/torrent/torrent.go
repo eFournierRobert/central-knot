@@ -21,7 +21,7 @@ func GetTorrent(infoHash []byte) (models.Torrent, error) {
 	return gorm.G[models.Torrent](db_utils.DatabaseConn).Where("info_hash = ?", infoHash).First(ctx)
 }
 
-func GetPeersFromHash(infoHash []byte, clientId string) []models.Peer {
+func GetPeersFromHash(infoHash []byte, askingClientId string) []models.Peer {
 	var peers []models.Peer
 	db_utils.DatabaseConn.Model(&models.Peer{}).
 		Joins("left join peer_torrents ON peers.id = peer_torrents.peer_id").
@@ -30,7 +30,7 @@ func GetPeersFromHash(infoHash []byte, clientId string) []models.Peer {
 			"torrents.info_hash = ? AND peer_torrents.event != ? AND peers.client_id != ?",
 			infoHash,
 			models.Stopped,
-			clientId,
+			askingClientId,
 		).Scan(&peers)
 
 	return peers

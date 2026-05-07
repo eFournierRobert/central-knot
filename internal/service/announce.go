@@ -9,13 +9,13 @@ import (
 	"strconv"
 )
 
-const requestInterval = 60
+const requestInterval = 300 //5 minutes
 
 func Announce(dto *models.FullPeerDto, ip string) (*models.PeerListDto, error) {
 	peer, err := repo_peer.GetPeer(dto.PeerId)
 	if err != nil {
 		if ip[0] == '[' {
-			return nil, errors.New("doesn't support ipv6")
+			return nil, errors.New("tracker doesn't support ipv6")
 		}
 		port, err := strconv.Atoi(dto.Port)
 		if err != nil {
@@ -54,17 +54,7 @@ func Announce(dto *models.FullPeerDto, ip string) (*models.PeerListDto, error) {
 		event = models.Started
 	}
 
-	uploaded, err := strconv.Atoi(dto.Uploaded)
-	if err != nil {
-		return nil, err
-	}
-
-	downloaded, err := strconv.Atoi(dto.Downloaded)
-	if err != nil {
-		return nil, err
-	}
-
-	left, err := strconv.Atoi(dto.Left)
+	uploaded, downloaded, left, err := parsePeerTorrentStatusValues(dto.Uploaded, dto.Downloaded, dto.Left)
 	if err != nil {
 		return nil, err
 	}
@@ -97,4 +87,23 @@ func Announce(dto *models.FullPeerDto, ip string) (*models.PeerListDto, error) {
 	}
 
 	return &peerListDto, nil
+}
+
+func parsePeerTorrentStatusValues(uploadedStr, downloadedStr, leftStr string) (int, int, int, error) {
+	uploaded, err := strconv.Atoi(uploadedStr)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	downloaded, err := strconv.Atoi(downloadedStr)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	left, err := strconv.Atoi(leftStr)
+	if err != nil {
+		return 0, 0, 0, err
+	}
+
+	return uploaded, downloaded, left, nil
 }
