@@ -16,7 +16,7 @@ func main() {
 	}
 	log.Println("Connected to database successfully")
 
-	api.SetUpAnnounceEndpoint()
+	http.HandleFunc("/announce", api.AnnounceHandler)
 
 	println(" +-+-+-+-+-+-+-+ +-+-+-+-+\n |C|e|n|t|r|a|l| |K|n|o|t|\n +-+-+-+-+-+-+-+ +-+-+-+-+")
 	if err := http.ListenAndServe(":9000", nil); err != nil {
