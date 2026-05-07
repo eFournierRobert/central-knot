@@ -17,15 +17,12 @@ func SetUpAnnounceEndpoint() {
 
 		ip := strings.Split(req.RemoteAddr, ":")[0]
 
-		if ip == "127.0.0.1" {
-			ip = "10.0.0.59"
-		}
-
 		if len(query) != 0 {
 			dto := models.NewPeerDto(query)
 
 			peerList, err := service.Announce(&dto, ip)
 			if err != nil {
+				writer.WriteHeader(http.StatusInternalServerError)
 				if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: err.Error()}); err != nil {
 					log.Println(err)
 				}
@@ -44,6 +41,8 @@ func SetUpAnnounceEndpoint() {
 					log.Println(err)
 				}
 			}
+		} else {
+			writer.WriteHeader(http.StatusBadRequest)
 		}
 	})
 }
