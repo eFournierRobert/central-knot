@@ -8,7 +8,9 @@ import (
 	"gorm.io/gorm"
 )
 
-func AddTorrent(infoHash []byte) error {
+// Add creates a Torrent with the given info hash and
+// adds it to the database.
+func Add(infoHash []byte) error {
 	t := models.Torrent{InfoHash: infoHash}
 
 	ctx := context.Background()
@@ -16,11 +18,17 @@ func AddTorrent(infoHash []byte) error {
 	return gorm.G[models.Torrent](db_utils.DatabaseConn).Create(ctx, &t)
 }
 
-func GetTorrent(infoHash []byte) (models.Torrent, error) {
+// Get returns the Torrent with the given info hash.
+func Get(infoHash []byte) (models.Torrent, error) {
 	ctx := context.Background()
 	return gorm.G[models.Torrent](db_utils.DatabaseConn).Where("info_hash = ?", infoHash).First(ctx)
 }
 
+// GetPeersFromHash returns a list of peer that are in the swarm of the
+// Torrent with the given info hash.
+//
+// askingClientId is the client ID ("peer id" in BEP 3) of the client making
+// the request. It will be excluded from the returned list.
 func GetPeersFromHash(infoHash []byte, askingClientId string) []models.Peer {
 	var peers []models.Peer
 	db_utils.DatabaseConn.Model(&models.Peer{}).

@@ -75,13 +75,13 @@ func upsertPeerTorrent(peerId, torrentId uint, dto *models.FullPeerDto, event mo
 }
 
 func ensureTorrent(infoHash []byte) (models.Torrent, error) {
-	torrent, err := repo_torrent.GetTorrent(infoHash)
+	torrent, err := repo_torrent.Get(infoHash)
 	if err != nil {
-		if err := repo_torrent.AddTorrent(infoHash); err != nil {
+		if err := repo_torrent.Add(infoHash); err != nil {
 			return models.Torrent{}, err
 		}
 
-		torrent, err = repo_torrent.GetTorrent(infoHash)
+		torrent, err = repo_torrent.Get(infoHash)
 		if err != nil {
 			return models.Torrent{}, err
 		}
