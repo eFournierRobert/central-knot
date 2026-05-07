@@ -8,8 +8,14 @@ import (
 	"strconv"
 )
 
-const requestInterval = 300 // 5 minutes
+// requestInterval is the suggested interval
+// between announcements of Central Knot. It
+// is 300 seconds or 5 minutes.
+const requestInterval = 300
 
+// Announce takes in the query DTO and the IP address of the client
+// that is making the announcement and returns the DTO struct of peers in
+// the swarm.
 func Announce(dto *models.FullPeerDto, ip string) (*models.PeerListDto, error) {
 	peer, err := ensurePeer(dto.PeerId, ip, dto.Port)
 	if err != nil {
@@ -34,6 +40,8 @@ func Announce(dto *models.FullPeerDto, ip string) (*models.PeerListDto, error) {
 	return buildPeerListDto(infoHashBytes, peer.ClientId)
 }
 
+// buildPeerListDto makes the request for peers in a given swarm and builds the
+// PeerListDto with them.
 func buildPeerListDto(infoHash []byte, clientId string) (*models.PeerListDto, error) {
 	peerListDto := models.PeerListDto{Interval: requestInterval, Peers: make([]models.PeerDto, 0)}
 	peers := repo_torrent.GetPeersFromHash(infoHash, clientId)
@@ -45,6 +53,8 @@ func buildPeerListDto(infoHash []byte, clientId string) (*models.PeerListDto, er
 	return &peerListDto, nil
 }
 
+// upsertPeerTorrent updates the PeerTorrent row for a given peer ID (as in primary key) and torrent ID
+// with the new data in the announcement DTO.
 func upsertPeerTorrent(peerId, torrentId uint, dto *models.FullPeerDto, event models.Events) error {
 	uploaded, downloaded, left, err := parsePeerTorrentStatusValues(dto.Uploaded, dto.Downloaded, dto.Left)
 	if err != nil {
@@ -74,6 +84,8 @@ func upsertPeerTorrent(peerId, torrentId uint, dto *models.FullPeerDto, event mo
 	return nil
 }
 
+// ensureTorrent returns the Torrent that has the given info hash in the
+// database. If it isn't found, it will create it and return the created row.
 func ensureTorrent(infoHash []byte) (models.Torrent, error) {
 	torrent, err := repo_torrent.Get(infoHash)
 	if err != nil {
@@ -90,6 +102,8 @@ func ensureTorrent(infoHash []byte) (models.Torrent, error) {
 	return torrent, nil
 }
 
+// ensurePeer returns the Peer that has the given peer ID in the
+// database. If it isn't found, it will create it and return the created row.
 func ensurePeer(peerId, ip, port string) (models.Peer, error) {
 	peer, err := repo_peer.GetPeer(peerId)
 	if err != nil {
@@ -115,6 +129,8 @@ func ensurePeer(peerId, ip, port string) (models.Peer, error) {
 	return peer, nil
 }
 
+// parsePeerTorrentStatusValues parses the strings for uploaded, downloaded and left in the
+// announcement DTO and returns a tuple of integers (uploaded, downloaded, left).
 func parsePeerTorrentStatusValues(uploadedStr, downloadedStr, leftStr string) (int, int, int, error) {
 	uploaded, err := strconv.Atoi(uploadedStr)
 	if err != nil {
