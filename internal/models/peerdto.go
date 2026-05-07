@@ -1,7 +1,8 @@
 package models
 
 import (
-	"strings"
+	"errors"
+	"net/url"
 )
 
 type FullPeerDto struct {
@@ -15,23 +16,42 @@ type FullPeerDto struct {
 	Compact    bool
 }
 
-func NewPeerDto(query string) FullPeerDto {
-	splitString := strings.Split(query, "&")
-	values := make(map[string]string)
+func NewPeerDto(query string) (*FullPeerDto, error) {
+	values, _ := url.ParseQuery(query)
 
-	for _, s := range splitString {
-		pair := strings.Split(s, "=")
-		values[pair[0]] = pair[1]
+	if err := dtoValidation(values); err != nil {
+		return nil, err
 	}
 
-	return FullPeerDto{
-		InfoHash:   values["info_hash"],
-		PeerId:     values["peer_id"],
-		Port:       values["port"],
-		Uploaded:   values["uploaded"],
-		Downloaded: values["downloaded"],
-		Left:       values["left"],
-		Event:      values["event"],
-		Compact:    values["compact"] == "1",
+	return &FullPeerDto{
+		InfoHash:   values.Get("info_hash"),
+		PeerId:     values.Get("peer_id"),
+		Port:       values.Get("port"),
+		Uploaded:   values.Get("uploaded"),
+		Downloaded: values.Get("downloaded"),
+		Left:       values.Get("left"),
+		Event:      values.Get("event"),
+		Compact:    values.Get("compact") == "1",
+	}, nil
+}
+
+func dtoValidation(values url.Values) error {
+	if len(values) == 0 {
+		return errors.New("empty params")
 	}
+
+	if !values.Has("info_hash") {
+		return errors.New("invalid info hash")
+	}
+	if !values.Has("peer_id") {
+		return errors.New("invalid peer id")
+	}
+	if !values.Has("port") {
+		return errors.New("invalid port")
+	}
+	if !values.Has("uploaded") || !values.Has("downloaded") || !values.Has("left") {
+		return errors.New("invalid transfer status")
+	}
+
+	return nil
 }
