@@ -17,7 +17,10 @@ type FullPeerDto struct {
 }
 
 func NewPeerDto(query string) (*FullPeerDto, error) {
-	values, _ := url.ParseQuery(query)
+	values, err := url.ParseQuery(query)
+	if err != nil {
+		return nil, err
+	}
 
 	if err := dtoValidation(values); err != nil {
 		return nil, err

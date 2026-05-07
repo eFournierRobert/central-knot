@@ -18,31 +18,32 @@ func SetUpAnnounceEndpoint() {
 		ip, _, _ := net.SplitHostPort(req.RemoteAddr)
 
 		dto, err := models.NewPeerDto(query)
-		if err != nil {
-			peerList, err := service.Announce(dto, ip)
-			if err != nil {
-				writer.WriteHeader(http.StatusInternalServerError)
-				if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: err.Error()}); err != nil {
-					log.Println(err)
-				}
-				return
-			}
 
-			writer.WriteHeader(http.StatusOK)
-			writer.Header().Set("Content-Type", "text/plain")
-			if dto.Compact {
-				compactPeerList := peerList.ToCompact()
-				if err := bencode.Marshal(writer, compactPeerList); err != nil {
-					log.Println(err)
-				}
-			} else {
-				if err := bencode.Marshal(writer, *peerList); err != nil {
-					log.Println(err)
-				}
-			}
-		} else {
+		writer.Header().Set("Content-Type", "text/plain")
+		if err != nil {
 			writer.WriteHeader(http.StatusBadRequest)
 			if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: "empty request"}); err != nil {
+				log.Println(err)
+			}
+		}
+
+		peerList, err := service.Announce(dto, ip)
+		if err != nil {
+			writer.WriteHeader(http.StatusInternalServerError)
+			if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: err.Error()}); err != nil {
+				log.Println(err)
+			}
+			return
+		}
+
+		writer.WriteHeader(http.StatusOK)
+		if dto.Compact {
+			compactPeerList := peerList.ToCompact()
+			if err := bencode.Marshal(writer, compactPeerList); err != nil {
+				log.Println(err)
+			}
+		} else {
+			if err := bencode.Marshal(writer, *peerList); err != nil {
 				log.Println(err)
 			}
 		}
