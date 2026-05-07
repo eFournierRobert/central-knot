@@ -6,7 +6,7 @@ with qBittorrent, and it is the client I tested it with.
 
 ## How it works
 When launched, it creates a Sqlite database and serves the endpoint `/announce` over the port 9000.
-After that, adding `http://<central-know address>:9000/announce` to a torrent trackers will put it
+After that, adding `http://<central-knot address>:9000/announce` to a torrent trackers will put it
 in use.
 
 The BEP doesn't really specify error handling other than a response with the key `failure reason`,
