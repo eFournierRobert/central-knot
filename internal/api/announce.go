@@ -15,6 +15,8 @@ func AnnounceHandler(writer http.ResponseWriter, req *http.Request) {
 	log.Println(query)
 
 	ip, _, _ := net.SplitHostPort(req.RemoteAddr)
+
+	writer.Header().Set("Content-Type", "text/plain")
 	if ip[0] == '[' {
 		writer.WriteHeader(http.StatusBadRequest)
 		if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: "ipv6 not supported"}); err != nil {
@@ -25,7 +27,6 @@ func AnnounceHandler(writer http.ResponseWriter, req *http.Request) {
 
 	dto, err := models.NewPeerDto(query)
 
-	writer.Header().Set("Content-Type", "text/plain")
 	if err != nil {
 		writer.WriteHeader(http.StatusBadRequest)
 		if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: "empty request"}); err != nil {
