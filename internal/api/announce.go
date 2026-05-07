@@ -16,6 +16,13 @@ func SetUpAnnounceEndpoint() {
 		log.Println(query)
 
 		ip, _, _ := net.SplitHostPort(req.RemoteAddr)
+		if ip[0] == '[' {
+			writer.WriteHeader(http.StatusBadRequest)
+			if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: "ipv6 not supported"}); err != nil {
+				log.Println(err)
+			}
+			return
+		}
 
 		dto, err := models.NewPeerDto(query)
 
@@ -25,6 +32,7 @@ func SetUpAnnounceEndpoint() {
 			if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: "empty request"}); err != nil {
 				log.Println(err)
 			}
+			return
 		}
 
 		peerList, err := service.Announce(dto, ip)
