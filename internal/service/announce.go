@@ -9,7 +9,7 @@ import (
 	"strconv"
 )
 
-const requestInterval = 300 //5 minutes
+const requestInterval = 300 // 5 minutes
 
 func Announce(dto *models.FullPeerDto, ip string) (*models.PeerListDto, error) {
 	peer, err := repo_peer.GetPeer(dto.PeerId)

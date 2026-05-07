@@ -25,12 +25,9 @@ func GetPeer(id string) (models.Peer, error) {
 }
 
 func ChangeIp(clientId, newIp string) error {
-	peer, err := GetPeer(clientId)
-	if err != nil {
-		return err
-	}
-
-	peer.Ip = newIp
-	db_utils.DatabaseConn.Save(&peer)
-	return nil
+	ctx := context.Background()
+	_, err := gorm.G[models.Peer](db_utils.DatabaseConn).
+		Where("client_id = ?", clientId).
+		Update(ctx, "ip", newIp)
+	return err
 }
