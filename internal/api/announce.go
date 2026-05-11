@@ -3,6 +3,7 @@ package api
 import (
 	"central-knot/internal/models"
 	"central-knot/internal/service"
+	"errors"
 	"log"
 	"net"
 	"net/http"
@@ -19,29 +20,20 @@ func AnnounceHandler(writer http.ResponseWriter, req *http.Request) {
 
 	writer.Header().Set("Content-Type", "text/plain")
 	if ip[0] == '[' {
-		writer.WriteHeader(http.StatusBadRequest)
-		if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: "ipv6 not supported"}); err != nil {
-			log.Println(err)
-		}
+		writeError(writer, http.StatusBadRequest, errors.New("IPv6 not supported"))
 		return
 	}
 
 	dto, err := models.NewPeerDto(query)
 
 	if err != nil {
-		writer.WriteHeader(http.StatusBadRequest)
-		if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: "empty request"}); err != nil {
-			log.Println(err)
-		}
+		writeError(writer, http.StatusBadRequest, errors.New("empty request"))
 		return
 	}
 
 	peerList, err := service.Announce(dto, ip)
 	if err != nil {
-		writer.WriteHeader(http.StatusInternalServerError)
-		if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: err.Error()}); err != nil {
-			log.Println(err)
-		}
+		writeError(writer, http.StatusInternalServerError, err)
 		return
 	}
 
@@ -55,5 +47,12 @@ func AnnounceHandler(writer http.ResponseWriter, req *http.Request) {
 		if err := bencode.Marshal(writer, *peerList); err != nil {
 			log.Println(err)
 		}
+	}
+}
+
+func writeError(writer http.ResponseWriter, httpCode int, err error) {
+	writer.WriteHeader(httpCode)
+	if err := bencode.Marshal(writer, models.ErrorResponseDto{FailureReason: err.Error()}); err != nil {
+		log.Println(err)
 	}
 }
