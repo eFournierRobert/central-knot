@@ -16,7 +16,11 @@ func AnnounceHandler(writer http.ResponseWriter, req *http.Request) {
 	query := req.URL.RawQuery
 	log.Println(query)
 
-	ip, _, _ := net.SplitHostPort(req.RemoteAddr)
+	ip, _, err := net.SplitHostPort(req.RemoteAddr)
+	if err != nil {
+		writeError(writer, http.StatusInternalServerError, err)
+		return
+	}
 
 	writer.Header().Set("Content-Type", "text/plain")
 	if ip[0] == '[' {
