@@ -4,6 +4,7 @@ import (
 	"central-knot/internal/models"
 	"central-knot/internal/repository/db_utils"
 	"context"
+	"errors"
 
 	"gorm.io/gorm"
 )
@@ -32,8 +33,13 @@ func Get(id string) (models.Peer, error) {
 // to the new given IP.
 func ChangeIp(clientId, newIp string) error {
 	ctx := context.Background()
-	_, err := gorm.G[models.Peer](db_utils.DatabaseConn).
+	rows, err := gorm.G[models.Peer](db_utils.DatabaseConn).
 		Where("client_id = ?", clientId).
 		Update(ctx, "ip", newIp)
+
+	if rows == 0 {
+		return errors.New("none existent peer")
+	}
+
 	return err
 }

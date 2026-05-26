@@ -129,7 +129,7 @@ func ensurePeer(peerId, ip, port string) (models.Peer, error) {
 	return peer, nil
 }
 
-// parsePeerTorrentStatusValues parses the strings for uploaded, downloaded and left in the
+// parsePeerTorrentStatusValues parses the strings for uploaded, downloaded, and left in the
 // announcement DTO and returns a tuple of integers (uploaded, downloaded, left).
 func parsePeerTorrentStatusValues(uploadedStr, downloadedStr, leftStr string) (int, int, int, error) {
 	uploaded, err := strconv.Atoi(uploadedStr)

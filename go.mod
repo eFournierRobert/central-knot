@@ -3,11 +3,18 @@ module central-knot
 go 1.26.2
 
 require (
-	github.com/jackpal/bencode-go v1.0.2 // indirect
+	github.com/jackpal/bencode-go v1.0.2
+	gorm.io/driver/sqlite v1.6.0
+	gorm.io/gorm v1.31.1
+	github.com/stretchr/testify v1.11.1
+)
+
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
 	github.com/mattn/go-sqlite3 v1.14.44 // indirect
-	golang.org/x/text v0.36.0 // indirect
-	gorm.io/driver/sqlite v1.6.0 // indirect
-	gorm.io/gorm v1.31.1 // indirect
+	github.com/pmezard/go-difflib v1.0.0 // indirect
+	golang.org/x/text v0.37.0 // indirect
+	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
