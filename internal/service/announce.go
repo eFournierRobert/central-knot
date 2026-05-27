@@ -5,6 +5,7 @@ import (
 	repo_peer "central-knot/internal/repository/peer"
 	repo_peerTorrent "central-knot/internal/repository/peerTorrent"
 	repo_torrent "central-knot/internal/repository/torrent"
+	"errors"
 	"strconv"
 )
 
@@ -30,7 +31,7 @@ func Announce(dto *models.FullPeerDto, ip string) (*models.PeerListDto, error) {
 
 	event, err := models.ParseEvent(dto.Event)
 	if err != nil {
-		event = models.Started
+		return nil, errors.New("invalid event")
 	}
 
 	if err := upsertPeerTorrent(peer.ID, torrent.ID, dto, event); err != nil {
@@ -53,7 +54,7 @@ func buildPeerListDto(infoHash []byte, clientId string) (*models.PeerListDto, er
 	return &peerListDto, nil
 }
 
-// upsertPeerTorrent updates the PeerTorrent row for a given peer ID (as in primary key) and torrent ID
+// upsertPeerTorrent updates the PeerTorrent row for a given peer ID (as in a primary key) and torrent ID
 // with the new data in the announcement DTO.
 func upsertPeerTorrent(peerId, torrentId uint, dto *models.FullPeerDto, event models.Events) error {
 	uploaded, downloaded, left, err := parsePeerTorrentStatusValues(dto.Uploaded, dto.Downloaded, dto.Left)
@@ -129,7 +130,7 @@ func ensurePeer(peerId, ip, port string) (models.Peer, error) {
 	return peer, nil
 }
 
-// parsePeerTorrentStatusValues parses the strings for uploaded, downloaded and left in the
+// parsePeerTorrentStatusValues parses the strings for uploaded, downloaded, and left in the
 // announcement DTO and returns a tuple of integers (uploaded, downloaded, left).
 func parsePeerTorrentStatusValues(uploadedStr, downloadedStr, leftStr string) (int, int, int, error) {
 	uploaded, err := strconv.Atoi(uploadedStr)

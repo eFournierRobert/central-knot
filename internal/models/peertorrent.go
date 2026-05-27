@@ -22,12 +22,14 @@ const (
 // on rows of peer_torrent.
 type PeerTorrent struct {
 	gorm.Model
-	PeerId     uint
-	TorrentId  uint
-	Uploaded   int64
-	Downloaded int64
-	Left       int64
-	Event      Events
+	PeerId     uint    `gorm:"not null"`
+	Peer       Peer    `gorm:"foreignKey:PeerId"`
+	TorrentId  uint    `gorm:"not null"`
+	Torrent    Torrent `gorm:"foreignKey:TorrentId"`
+	Uploaded   int64   `gorm:"not null"`
+	Downloaded int64   `gorm:"not null"`
+	Left       int64   `gorm:"not null"`
+	Event      Events  `gorm:"not null"`
 }
 
 // ParseEvent takes a string and returns the corresponding

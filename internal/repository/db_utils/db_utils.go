@@ -18,6 +18,7 @@ func OpenDatabaseConnection() error {
 	if err != nil {
 		return err
 	}
+	db.Exec("PRAGMA foreign_keys = ON")
 
 	DatabaseConn = db
 

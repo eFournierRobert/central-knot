@@ -2,13 +2,13 @@ package models
 
 import "gorm.io/gorm"
 
-// Peer is the struct that is used for database operations
+// Peer is the struct used for database operations
 // on peers.
 type Peer struct {
 	gorm.Model
-	ClientId string
-	Ip       string
-	Port     int
+	ClientId string `gorm:"unique;not null"`
+	Ip       string `gorm:"not null"`
+	Port     int    `gorm:"not null"`
 	Swarms   []PeerTorrent
 }
 
