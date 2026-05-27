@@ -36,6 +36,8 @@ func SetupTest(tb testing.TB) {
 		log.Fatalln(err)
 	}
 
+	db.Exec("PRAGMA foreign_keys = ON")
+
 	tb.Cleanup(func() {
 		if err := os.Remove(dbFile.Name()); err != nil {
 			log.Fatalln(err)

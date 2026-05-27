@@ -6,9 +6,9 @@ import "gorm.io/gorm"
 // on peers.
 type Peer struct {
 	gorm.Model
-	ClientId string `gorm:"unique"`
-	Ip       string
-	Port     int
+	ClientId string `gorm:"unique;not null"`
+	Ip       string `gorm:"not null"`
+	Port     int    `gorm:"not null"`
 	Swarms   []PeerTorrent
 }
 
