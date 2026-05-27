@@ -6,6 +6,6 @@ import "gorm.io/gorm"
 // on torrents.
 type Torrent struct {
 	gorm.Model
-	InfoHash []byte
+	InfoHash []byte `gorm:"unique"`
 	Peers    []PeerTorrent
 }
